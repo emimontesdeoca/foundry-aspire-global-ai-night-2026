@@ -1,0 +1,23 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.0">
+
+  <!--
+    The AppHost defines both agents' infrastructure as code.
+    Aspire.Hosting.Foundry replaces the former Aspire.Hosting.Azure.AIFoundry (Aspire 13.1 or earlier).
+    Once the build succeeds, pin the restored version and avoid changes before the talk.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>global-ai-night-2026-apphost</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../AgendaAgent/AgendaAgent.csproj" />
+    <ProjectReference Include="../PosterAgent/PosterAgent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Foundry" Version="13.6.0-preview.1.26479.8" />
+  </ItemGroup>
+
+</Project>

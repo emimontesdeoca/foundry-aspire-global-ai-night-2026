@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AppHost/AppHost.csproj" />
+  <Project Path="ServiceDefaults/ServiceDefaults.csproj" />
+  <Project Path="AgendaAgent/AgendaAgent.csproj" />
+  <Project Path="PosterAgent/PosterAgent.csproj" />
+</Solution>
