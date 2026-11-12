@@ -236,7 +236,7 @@ style: |
 ## Infraestructura de agentes con Aspire
 
 **Emiliano Montesdeoca del Puerto**<br>
-Global AI Night 2026 · 12 de noviembre · online
+Global AI Night 2026 · 12 de noviembre · en línea
 
 <!--
 TIEMPO: 0:00 – 0:30
@@ -255,7 +255,7 @@ y después desplegar los mismos agentes en Foundry. Aspire conecta código e inf
   <div class="bio-copy">
     <p><strong>Cloud Solutions Team Lead</strong><br>Intelequia Technologies</p>
     <p>x5 <strong>Microsoft MVP</strong><br>Developer Technologies </p>
-    <p><strong>Marido</strong> y <strong>papá</strong> de las mas hermosas.</p>
+    <p><strong>Marido</strong> y <strong>papá</strong> de las más hermosas.</p>
     <p><strong>Uruguayo</strong>, muy canario.</p>
     <div class="bio-badges">
       <img src="assets/most-active-speaker-2025.svg" alt="Most Active Speaker 2025">
@@ -332,6 +332,8 @@ No leer todas las cajas ni resolverlas todavía.
   <div class="visual-copy">
     <p><strong>Crear:</strong> levantar cada proceso por separado.</p>
     <p><strong>Conectar:</strong> copiar puertos y endpoints a la configuración.</p>
+    <p><strong>Arrancar:</strong> coordinar el orden y las dependencias.</p>
+    <p><strong>Depurar:</strong> buscar errores entre procesos y logs.</p>
     <p><strong>Repetir:</strong> volver a alinear todo al cambiar de entorno.</p>
   </div>
   <div class="diagram">
@@ -444,7 +446,7 @@ y seguir una petición sin ir saltando entre consolas.
 <div class="visual-layout">
   <div class="visual-copy">
     <p><strong>Proyecto:</strong> agrupa los modelos y expone una API.</p>
-    <p><strong>Despliegues independientes:</strong> texto e imágenes, cada uno con su modelo y versión.</p>
+    <p><strong>Despliegues independientes:</strong> uno para texto y otro para imágenes, cada uno con su modelo y versión.</p>
     <p><strong>Los agentes</strong> llaman a esa API desde tu equipo.</p>
     <p><strong>Preparación:</strong> región, cuota y permisos de la suscripción.</p>
     <p><strong>Identidad y roles:</strong> acceso sin claves compartidas.</p>
@@ -481,7 +483,7 @@ Responses API del proyecto. La autenticación va con Entra ID (az login en local
     <p><strong>AppHost:</strong> proyecto, modelos y conexiones declarados en código.</p>
     <p><strong>Agenda:</strong> recibe el proyecto y el modelo de chat.</p>
     <p><strong>Carteles:</strong> añade el modelo de imágenes.</p>
-    <p><strong>Los agentes leen configuración;</strong> no necesitan conocer Aspire.</p>
+    <p><strong>Los agentes leen la configuración;</strong> no necesitan conocer Aspire.</p>
   </div>
   <div class="diagram">
     <div class="diagram-node primary">AppHost · Aspire</div>
