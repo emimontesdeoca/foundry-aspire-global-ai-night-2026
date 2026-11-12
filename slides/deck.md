@@ -324,7 +324,46 @@ No leer todas las cajas ni resolverlas todavía.
 
 <!-- _class: visual -->
 
-## Una aplicación completa. Un mismo flujo de desarrollo.
+## Crear servicios era fácil. Conectarlos, no.
+
+<p class="visual-intro">Puertos, URLs, variables y orden de arranque: todo se coordinaba a mano.</p>
+
+<div class="visual-layout">
+  <div class="visual-copy">
+    <p><strong>Crear:</strong> levantar cada proceso por separado.</p>
+    <p><strong>Conectar:</strong> copiar puertos y endpoints a la configuración.</p>
+    <p><strong>Repetir:</strong> volver a alinear todo al cambiar de entorno.</p>
+  </div>
+  <div class="diagram">
+    <div class="diagram-node primary">Aplicación</div>
+    <div class="diagram-arrow">↓</div>
+    <div class="diagram-pair">
+      <div class="diagram-node">Puertos<br><small>¿dónde escucha?</small></div>
+      <div class="diagram-node cyan">URLs<br><small>¿a qué endpoint?</small></div>
+    </div>
+    <div class="diagram-arrow">↓</div>
+    <div class="diagram-node orange">Configuración dispersa</div>
+    <div class="diagram-note">.env · scripts · Docker · portal · README</div>
+  </div>
+</div>
+
+<p class="metric">Si una pieza cambiaba, tocaba perseguir el mapa de nuevo.</p>
+
+<!--
+TIEMPO: 2:30 – 3:00
+
+Contar la rutina: arrancar servicios por separado, asignar puertos, copiar URLs y endpoints
+a la configuración, y repetir el montaje al cambiar de entorno. El mapa vivía repartido entre
+.env, scripts, Docker, el portal y la memoria del equipo.
+Cerrar: «El reto no era crear cada servicio, sino coordinar el conjunto». Pasar a Aspire como
+una forma de describir ese sistema desde un solo lugar.
+-->
+
+---
+
+<!-- _class: visual -->
+
+## Una aplicación completa. Un mismo flujo de desarrollo. El mismo punto de partida.
 
 <p class="visual-intro">Aspire coordina servicios locales y recursos de Azure desde el AppHost.</p>
 
@@ -348,7 +387,7 @@ No leer todas las cajas ni resolverlas todavía.
 <p class="metric">Desarrollar en local. Aspire orquesta el sistema completo.</p>
 
 <!--
-TIEMPO: 2:30 – 3:30
+TIEMPO: 3:00 – 4:00
 
 La demo se centra en el ciclo de desarrollo y la orquestación con Aspire, no en el framework
 interno de los agentes. El AppHost describe los procesos locales, sus dependencias y los recursos
@@ -385,7 +424,7 @@ desplegaremos la infraestructura: en este ejemplo, Aspire no aloja los agentes e
 </div>
 
 <!--
-TIEMPO: 3:30 – 5:00
+TIEMPO: 4:00 – 5:30
 
 Aspire no es el runtime del agente: describe qué recursos hay y qué necesita cada servicio.
 En desarrollo, conviven procesos locales y recursos reales de Azure.
@@ -424,7 +463,7 @@ y seguir una petición sin ir saltando entre consolas.
 </div>
 
 <!--
-TIEMPO: 5:00 – 6:30
+TIEMPO: 5:30 – 7:00
 
 Foundry es la parte de IA de esta infraestructura, no una explicación aparte del flujo.
 Aquí lo usamos solo para los modelos: los agentes son procesos normales que llaman a la
@@ -462,7 +501,7 @@ Responses API del proyecto. La autenticación va con Entra ID (az login en local
 </div>
 
 <!--
-TIEMPO: 6:30 – 8:00
+TIEMPO: 7:00 – 8:30
 
 Enseñar el AppHost una sola vez: recursos de Azure, referencias y WaitFor.
 La agenda no recibe el modelo de imágenes. Los agentes solo leen variables de entorno:
