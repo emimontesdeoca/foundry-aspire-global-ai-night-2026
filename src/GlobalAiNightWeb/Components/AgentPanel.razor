@@ -1,0 +1,76 @@
+@using System.Text.Json
+@using System.Text.RegularExpressions
+@inject IHttpClientFactory HttpClientFactory
+
+<section class="panel">
+    <h2>@Title</h2>
+    <p class="models">@Models</p>
+
+    <form @onsubmit="SendAsync">
+        <textarea @bind="_prompt" rows="3" disabled="@_busy"></textarea>
+        <button type="submit" disabled="@_busy">@(_busy ? "Pensando…" : "Enviar")</button>
+    </form>
+
+    @if (_answer is not null)
+    {
+        <p class="answer">@_answer</p>
+    }
+    @if (PosterUrl is { } url)
+    {
+        <img src="@url" alt="Cartel generado" />
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string Models { get; set; } = "";
+    [Parameter, EditorRequired] public string Client { get; set; } = "";
+    [Parameter] public string Example { get; set; } = "";
+
+    private string _prompt = "";
+    private string? _answer;
+    private bool _busy;
+
+    protected override void OnInitialized() => _prompt = Example;
+
+    private string? PosterUrl => _answer is null ? null
+        : Regex.Match(_answer, @"http://localhost:\d+/posters/[\w.-]+\.png") is { Success: true } m ? m.Value : null;
+
+    private async Task SendAsync()
+    {
+        _busy = true;
+        _answer = null;
+        try
+        {
+            var response = await HttpClientFactory.CreateClient(Client)
+                .PostAsJsonAsync("responses", new { input = _prompt });
+            var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+            _answer = ExtractText(json) ?? json.ToString();
+        }
+        catch (Exception ex)
+        {
+            _answer = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    // Responses API: output[] → content[] → { type: "output_text", text }, or error.message on failure
+    private static string? ExtractText(JsonElement json)
+    {
+        if (json.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)
+            return $"Error: {error.GetProperty("message").GetString()}";
+
+        if (!json.TryGetProperty("output", out var output)) return null;
+
+        var texts = output.EnumerateArray()
+            .Where(item => item.TryGetProperty("content", out _))
+            .SelectMany(item => item.GetProperty("content").EnumerateArray())
+            .Where(part => part.TryGetProperty("text", out _))
+            .Select(part => part.GetProperty("text").GetString());
+
+        return string.Join("\n", texts) is { Length: > 0 } text ? text : null;
+    }
+}

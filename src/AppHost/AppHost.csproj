@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.0">
+<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
 
   <!--
     The AppHost defines both agents' infrastructure as code.
@@ -7,6 +7,7 @@
   -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <AspireUseCliBundle>true</AspireUseCliBundle>
     <IsAspireHost>true</IsAspireHost>
     <UserSecretsId>global-ai-night-2026-apphost</UserSecretsId>
   </PropertyGroup>
@@ -14,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="../AgendaAgent/AgendaAgent.csproj" />
     <ProjectReference Include="../PosterAgent/PosterAgent.csproj" />
+    <ProjectReference Include="../GlobalAiNightWeb/GlobalAiNightWeb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,8 +11,8 @@ using OpenTelemetry.Trace;
 namespace Microsoft.Extensions.Hosting;
 
 /// <summary>
-/// Add <c>builder.AddServiceDefaults()</c> to each agent to export OpenTelemetry to
-/// OTEL_EXPORTER_OTLP_ENDPOINT (the Aspire dashboard locally) and enable health checks.
+/// Add <c>builder.AddServiceDefaults()</c> to enable service discovery, health checks,
+/// and OpenTelemetry export to the Aspire dashboard locally.
 /// </summary>
 public static class Extensions
 {
@@ -27,6 +27,9 @@ public static class Extensions
             logging.IncludeScopes = true;
         });
 
+        builder.Services.AddServiceDiscovery();
+        builder.Services.ConfigureHttpClientDefaults(http => http.AddServiceDiscovery());
+
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()
@@ -38,7 +41,7 @@ public static class Extensions
                 .AddAspNetCoreInstrumentation(o => o.Filter = ctx => !ctx.Request.Path.StartsWithSegments("/health"))
                 .AddHttpClientInstrumentation());
 
-        // Aspire injects the OTLP endpoint locally. In Foundry, telemetry goes to Application Insights.
+        // Aspire injects the OTLP endpoint locally; outside Aspire, set OTEL_EXPORTER_OTLP_ENDPOINT.
         if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
         {
             builder.Services.AddOpenTelemetry().UseOtlpExporter();

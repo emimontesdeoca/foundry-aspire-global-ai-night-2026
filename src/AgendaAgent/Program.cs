@@ -13,14 +13,14 @@ using Microsoft.Extensions.AI;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
-// Aspire injects DEFAULT_AD_PORT; 8088 is the hosted agents' default.
+// Aspire injects DEFAULT_AD_PORT; 8088 is only a fallback when running outside Aspire.
 var port = Environment.GetEnvironmentVariable("DEFAULT_AD_PORT") ?? "8088";
 builder.WebHost.UseUrls($"http://+:{port}");
 
-// Locally, Aspire injects PROJECT_URI and CHAT_MODELNAME through the AppHost references.
-// In Foundry, the platform injects FOUNDRY_PROJECT_ENDPOINT.
+// AppHost references provide the project endpoint and model deployment.
+// Outside Aspire, set FOUNDRY_PROJECT_ENDPOINT and CHAT_GLOBALAINIGHT_MODELNAME.
 var endpoint = Config.ProjectEndpoint();
-var model = Config.Env("CHAT_MODELNAME") ?? Config.Env("AZURE_AI_MODEL_DEPLOYMENT_NAME") ?? "chat";
+var model = Config.RequiredEnv("CHAT_GLOBALAINIGHT_MODELNAME");
 
 AIAgent agent = new AIProjectClient(endpoint, new DefaultAzureCredential())
     .GetProjectOpenAIClient()
@@ -30,7 +30,7 @@ AIAgent agent = new AIProjectClient(endpoint, new DefaultAzureCredential())
     .UseOpenTelemetry(sourceName: "AgendaAgent", configure: options => options.EnableSensitiveData = true) // demos only
     .Build()
     .AsAIAgent(
-        name: "schedule-agent",
+        name: "schedule-agent-globalainight",
         instructions: """
             You are the Global AI Night schedule assistant.
             Help attendees choose sessions based on their interests.

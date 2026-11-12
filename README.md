@@ -1,11 +1,10 @@
 # From code to Foundry: agent infrastructure with Aspire
 
-> Microsoft Agent Framework + Microsoft Foundry + Aspire, without portal clicks or deployment scripts
-> **Global AI Night 2026** · Online · November 12, 2026 · 40 minutes (35 + 5 for Q&A)
-> Speaker: **Emiliano Montesdeoca del Puerto**, Cloud Solutions Team Lead @ Intelequia
-
 This repository contains the talk slides (MARP) and a small .NET demo that moves two agents from a
 local machine to Microsoft Foundry.
+
+The slides are published on [GitHub Pages](https://emimontesdeoca.github.io/foundry-aspire-global-ai-night-2026/)
+and are rebuilt on pushes to `main` by GitHub Actions.
 
 ```text
 foundry-aspire-global-ai-night-2026/
@@ -20,10 +19,11 @@ foundry-aspire-global-ai-night-2026/
 └── src/
     ├── GlobalAiNight.slnx         # .NET solution
     ├── Directory.Build.props
-    ├── AppHost/                   # Foundry, project, two model deployments, and agents
-    ├── ServiceDefaults/           # OpenTelemetry and health checks
+    ├── AppHost/                   # Foundry, project, models, agents, and playground
+    ├── ServiceDefaults/           # OpenTelemetry, service discovery, and health checks
     ├── AgendaAgent/               # gpt-5-mini + SearchSessions
-    └── PosterAgent/               # gpt-5-mini + GeneratePoster (gpt-image-1-mini)
+    ├── PosterAgent/               # gpt-5-mini + GeneratePoster (gpt-image-1-mini)
+    └── GlobalAiNightWeb/          # Blazor Server playground for both agents
 ```
 
 ## 1. The talk in a nutshell
@@ -31,14 +31,21 @@ foundry-aspire-global-ai-night-2026/
 Writing agents with Microsoft Agent Framework is the easy part. Teams also need to create the
 Foundry account and project, deploy models, grant access without sharing keys, inspect agent traces,
 and deploy without relying on one person. This demo starts with two small .NET agents—one recommends
-sessions using `gpt-5-mini`, and one creates session posters with an image model—and publishes them
-to Foundry as hosted agents. An Aspire AppHost describes the infrastructure and connects each agent
+sessions using `gpt-5-mini`, and one creates session posters with an image model—that call models
+deployed in a Foundry project. An Aspire AppHost describes the infrastructure and connects each agent
 only to the resources it needs.
 
-The two commands are `aspire run` for local development (using real Foundry resources in Azure) and
-`aspire deploy` to publish the agents.
+The talk follows the development-to-deployment workflow: connect local agents to real Foundry
+resources in Azure with `aspire run`, review generated infrastructure with `aspire publish -o infra`,
+then provision that infrastructure with `aspire deploy`. Aspire supplies endpoints and configuration
+through references and brings local URLs, resource status, logs, and traces into the dashboard.
+Subscription, region, permissions, and quota still need to be chosen and prepared.
 
-**Agent Framework writes the agents, Foundry hosts them, and Aspire describes everything around them.**
+The agents are not Foundry hosted agents: they are regular .NET processes that call the project's
+Responses API with Entra ID. `Microsoft.Agents.AI.Foundry.Hosting` is used only to expose the
+`POST /responses` endpoint that the playground calls.
+
+**Agent Framework writes the agents, Foundry serves the models, and Aspire describes everything around them.**
 
 ## 2. The demo: two agents, two models
 
@@ -46,12 +53,13 @@ The demo is intentionally small: two independent agents, one tool per agent, and
 
 | Resource | What it is | Where it runs |
 |---|---|---|
-| `foundry` | Microsoft Foundry account; local auth is disabled and Aspire creates the required roles | Azure |
-| `project` | Foundry project and destination for the hosted agents | Azure |
-| `chat` | `gpt-5-mini` deployment | Azure |
-| `image` | `gpt-image-1-mini` deployment (`2025-10-06`) | Azure |
-| `schedule` | Recommends sessions from sample data using `chat` and `SearchSessions` | Local with `aspire run`; Foundry with `aspire deploy` |
-| `poster` | Uses `chat` to write an image description, then calls `GeneratePoster` to invoke `image` | Local with `aspire run`; Foundry with `aspire deploy` |
+| `foundry-globalainight` | Microsoft Foundry account; local auth is disabled and Aspire creates the required roles | Azure |
+| `project-globalainight` | Foundry project that groups the models and exposes the Responses API | Azure |
+| `chat-globalainight` | `gpt-5-mini` deployment | Azure |
+| `image-globalainight` | `gpt-image-1-mini` deployment (`2025-10-06`) | Azure |
+| `schedule-globalainight` | Recommends sessions from sample data using `chat-globalainight` and `SearchSessions` | Local with `aspire run` |
+| `poster-globalainight` | Uses `chat-globalainight` to write an image description, then calls `GeneratePoster` to invoke `image-globalainight` | Local with `aspire run` |
+| `playground-globalainight` | Blazor Server UI for testing both agents | Local with `aspire run` |
 
 The image model does not chat or call tools: it receives a description and returns an image. The
 `gpt-5-mini` agent understands the request, writes the description, and decides when to call the
@@ -63,31 +71,28 @@ are independent on purpose. Connecting them is an optional tip in the talk.
 
 The agents do not depend on Aspire. They read environment variables:
 
-| Variable | Set locally by Aspire | Set in Foundry |
+| Variable | Set by Aspire | Outside Aspire |
 |---|---|---|
-| Project endpoint | `PROJECT_URI` | `FOUNDRY_PROJECT_ENDPOINT` |
-| Chat deployment | `CHAT_MODELNAME` | `CHAT_MODELNAME` (or `AZURE_AI_MODEL_DEPLOYMENT_NAME`) |
-| Image deployment (poster only) | `IMAGE_MODELNAME` | `IMAGE_MODELNAME` |
+| Project endpoint | `PROJECT_GLOBALAINIGHT_URI` | `FOUNDRY_PROJECT_ENDPOINT` |
+| Chat deployment | `CHAT_GLOBALAINIGHT_MODELNAME` | `CHAT_GLOBALAINIGHT_MODELNAME` |
 | Port | `DEFAULT_AD_PORT` (9001 and 9002) | 8088 by default |
-| Poster base URL | `POSTER_URL_BASE` or `http://localhost:{port}` | Configure a reachable storage or web URL before sharing images |
-| Traces | `OTEL_EXPORTER_OTLP_ENDPOINT` (Aspire dashboard) | Application Insights |
+| Poster base URL | `POSTER_URL_BASE` or `http://localhost:{port}` | `POSTER_URL_BASE` |
+| Traces | `OTEL_EXPORTER_OTLP_ENDPOINT` (Aspire dashboard) | Any OTLP endpoint |
 
 The three demos are:
 
 | # | What it shows | Command |
 |---|---|---|
-| 1 | Aspire provisions Foundry, runs both agents locally, generates a poster, and shows its `invoke_agent → chat → execute_tool GeneratePoster → images/generations` trace | `aspire run` |
-| 2 | Bicep generated for the Foundry account, project, model deployments, and role assignments | `aspire publish -o infra` |
-| 3 | The same agents as hosted agents in Foundry, with traces in Application Insights | `aspire deploy` |
+| 1 | Aspire provisions Foundry, runs both agents locally, generates a poster, and shows its `invoke_agent → chat → execute_tool GeneratePoster → /openai/v1/images/generations` trace | `aspire run` |
+| 2 | Bicep generated for the Foundry account, project, and model deployments | `aspire publish -o infra` |
+| 3 | The same Foundry account, project, and models provisioned in Azure (short demo) | `aspire deploy` |
 
 ## 3. Requirements
 
-- **.NET 10 SDK** and **Aspire CLI 13.6 or later**. Install from [aspire.dev](https://aspire.dev/install/), then check with `aspire --version`.
+- **.NET 11 SDK** and **Aspire CLI 13.6 or later**. Install from [aspire.dev](https://aspire.dev/install/), then check with `aspire --version`.
 - **Azure CLI**, signed in with `az login` to the tenant where you will create resources.
-- **Docker** (or Podman) to build the agent images for demo 3.
 - An Azure subscription where your user can create resources and assign roles (Owner, or Contributor plus User Access Administrator at the subscription or resource-group scope).
-- **Foundry Project Manager** permissions on the project to publish hosted agents. If Aspire creates the project using your Owner identity, you already have the required access.
-- A region that supports `gpt-5-mini`, `gpt-image-1-mini`, and hosted agents. The AppHost is configured for `swedencentral`; verify model availability and quota in your subscription before the talk.
+- A region that supports `gpt-5-mini` and `gpt-image-1-mini`. The AppHost is configured for `swedencentral`; verify model availability and quota in your subscription before the talk.
 
 NuGet packages:
 
@@ -121,18 +126,18 @@ a few minutes; later runs reuse the provisioned resources.
 
 In the Aspire dashboard (the URL with a token appears in the console):
 
-1. **Resources**: `foundry`, `project`, `chat`, `image`, `schedule`, and `poster`.
-2. `poster` → **Environment**: `PROJECT_URI`, `CHAT_MODELNAME`, and `IMAGE_MODELNAME`. The `schedule` agent does not receive the image deployment.
-3. `schedule` → **Send Message**: *"I'm interested in deployment. Which session should I attend?"*
-4. `poster` → **Send Message**: *"Create a poster for the Aspire session."* It takes longer; open the returned `http://localhost:9002/posters/poster-HHmmss.png` link.
-5. **Traces**: inspect `invoke_agent poster-agent` → `chat gpt-5-mini` → `execute_tool GeneratePoster` → the HTTP call to `images/generations`.
+1. **Resources**: `foundry-globalainight`, `project-globalainight`, `chat-globalainight`, `image-globalainight`, `schedule-globalainight`, `poster-globalainight`, and `playground-globalainight`.
+2. `poster-globalainight` → **Environment**: `PROJECT_GLOBALAINIGHT_URI`, `CHAT_GLOBALAINIGHT_MODELNAME`, and `IMAGE_GLOBALAINIGHT_MODELNAME`. Aspire supplies the image deployment name used by the Images API. The `schedule-globalainight` agent does not receive the image model.
+3. Open `playground-globalainight` from the dashboard. It shows both agents side by side with a sample prompt; press **Enviar** on either one. The poster agent's local image is previewed in the page.
+4. **Traces**: inspect `invoke_agent poster-agent-globalainight` → `chat gpt-5-mini` → `execute_tool GeneratePoster` → the Responses `image_generation` tool call.
+
+The agents and the playground are added only in run mode, so `aspire publish` and `aspire deploy`
+contain just the Foundry infrastructure.
 
 You can also call the agents with `curl`:
 
 ```bash
-curl -X POST http://localhost:9001/responses \
-  -H "Content-Type: application/json" \
-  -d '{"input": "Are there any sessions about RAG?"}'
+curl -X POST http://localhost:9001/responses -H "Content-Type: application/json" -d '{"input": "Are there any sessions about RAG?"}'
 
 curl -X POST http://localhost:9002/responses \
   -H "Content-Type: application/json" \
@@ -147,27 +152,21 @@ aspire publish -o infra
 ```
 
 This generates Bicep for the application model in `infra/`. Inspect the Foundry account
-(`disableLocalAuth: true`), project, model deployments, and agent role assignments. Generated file
+(`disableLocalAuth: true`), project, and model deployments. Generated file
 names may vary by Aspire version. `infra/` is ignored by Git because it is generated output.
 
-## 7. Deploy to Foundry (demo 3)
+## 7. Provision with `aspire deploy` (demo 3)
 
 ```powershell
 cd src
 aspire deploy
 ```
 
-Aspire builds both agent images, pushes them to the project's container registry, and creates the
-hosted agents in the Foundry project.
+Aspire provisions the same Foundry account, project, and model deployments described in the
+AppHost. The agents are not deployed: they remain regular processes that call the project's API.
+Hosting them (App Service, Container Apps, etc.) is outside the scope of this demo.
 
-In the Foundry portal, open **Agents** → `schedule` → **Playground**. Traces appear under
-**Observability → Tracing** (the project's Application Insights) after a minute or two.
-
-The poster agent also runs after deployment, but the PNG is stored in the agent's session and its
-local URL is not publicly reachable. To share posters from Foundry, add Blob Storage to the AppHost
-and upload the PNG there. This is intentionally outside the minimal demo.
-
-**Cleanup:** delete the `rg-global-ai-night-2026` resource group when finished.
+**Cleanup:** delete the `rg-globalainight` resource group when finished.
 
 ## 8. Slides (MARP)
 
@@ -190,15 +189,15 @@ for the three demos, with timing for a 40-minute slot:
 | 0–0:30 | Title | 1 |
 | 0:30–1:30 | About the speaker | 2 |
 | 1:30–2:30 | The usual setup pain | 3 |
-| 2:30–3:30 | Proposed stack | 4 |
+| 2:30–3:30 | Local development to Azure deployment | 4 |
 | 3:30–5 | Aspire | 5 |
 | 5–6:30 | Microsoft Foundry | 6 |
 | 6:30–8 | How the pieces connect | 7 |
 | 8–9 | The two demo agents | 8 |
-| 9–19 | Demo 1: local run | 9 |
-| 19–22 | Demo 2: generated Bicep | 10 |
-| 22–32 | Demo 3: deploy to Foundry | 11 |
-| 32–35 | Takeaways | 12 |
+| 9–20 | Demo 1: local run | 9 |
+| 20–26 | Demo 2: generated Bicep | 10 |
+| 26–32 | Demo 3: provision with `aspire deploy` | 11 |
+| 32–35 | Development-to-deployment takeaways | 12 |
 | 35–40 | Q&A | 13 |
 
 ## 9. Common issues
@@ -213,15 +212,13 @@ for the three demos, with timing for a 40-minute slot:
 | Provisioning fails due to permissions | The signed-in user must be able to create resources and assign roles |
 | `GetProjectOpenAIClient` does not exist | Add `using Azure.AI.Extensions.OpenAI;` or the `Azure.AI.Projects` package |
 | 401 / `AuthenticationFailed` | Run `az login` in the correct tenant; the AppHost uses `CredentialSource: AzureCli` |
-| 404 `DeploymentNotFound` | `CHAT_MODELNAME` and `IMAGE_MODELNAME` must be the deployment names (`chat`, `image`), not the model names |
+| 404 `DeploymentNotFound` | `CHAT_GLOBALAINIGHT_MODELNAME` and `IMAGE_GLOBALAINIGHT_MODELNAME` must be the deployment names (`chat-globalainight`, `image-globalainight`), not the catalog model IDs |
 | Image deployment cannot be provisioned | Check regional availability, subscription quota, and access for the selected image model |
-| `GetImageClient` is unavailable | Use the OpenAI SDK image client with a `BearerTokenPolicy` and the Foundry project endpoint |
+| Poster image generation returns 404 | The Foundry image API uses the resource endpoint `/openai/v1/images/generations` and the image deployment name from `IMAGE_GLOBALAINIGHT_MODELNAME` in the request body |
 | Poster generation is slow or times out | Image generation can take several seconds; check quota if it takes more than a minute |
 | Port conflict between agents | The AppHost assigns ports 9001 and 9002 with `WithHttpEndpoint` |
 | 429 | Increase the model deployment's TPM quota |
 | No traces in the dashboard | Check `AddServiceDefaults()`, `UseOpenTelemetry(sourceName: "AgendaAgent"/"PosterAgent")`, and `ServiceDefaults/Extensions.cs` |
-| `aspire deploy` fails while pushing images | Start Docker and verify that the project registry is accessible |
-| A deployed agent does not start | Check the hosted agent logs in Foundry; common causes are a missing environment variable or role |
 
 The Foundry integration in Aspire and the Agent Framework hosting package are prerelease and may
 change between versions. Build and run the complete demo before presenting.
@@ -231,8 +228,6 @@ change between versions. Build and run the complete demo before presenting.
 - [Aspire Foundry integration](https://aspire.dev/integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-host/)
 - [Connect applications to Foundry](https://aspire.dev/integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-connect/)
 - [Aspire, Agent Framework, and Foundry sample](https://devblogs.microsoft.com/aspire/building-distributed-multi-agent-systems-with-aspire-and-microsoft-agent-framework/)
-- [Agent Framework hosted agents](https://learn.microsoft.com/agent-framework/hosting/foundry-hosted-agent)
-- [Deploy a hosted agent](https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent)
 - [Foundry model availability by region](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability)
 - [Agent Framework](https://learn.microsoft.com/agent-framework) · [GitHub repository](https://github.com/microsoft/agent-framework)
 

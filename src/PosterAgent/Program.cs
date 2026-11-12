@@ -18,13 +18,17 @@ builder.AddServiceDefaults();
 var port = Environment.GetEnvironmentVariable("DEFAULT_AD_PORT") ?? "8088";
 builder.WebHost.UseUrls($"http://+:{port}");
 
-var project = new AIProjectClient(Config.ProjectEndpoint(), new DefaultAzureCredential());
-var chatModel = Config.Env("CHAT_MODELNAME") ?? Config.Env("AZURE_AI_MODEL_DEPLOYMENT_NAME") ?? "chat";
-var imageModel = Config.Env("IMAGE_MODELNAME") ?? "image";
+var chatModel = Config.RequiredEnv("CHAT_GLOBALAINIGHT_MODELNAME");
+var imageDeploymentName = Config.RequiredEnv("IMAGE_GLOBALAINIGHT_MODELNAME");
+var projectEndpoint = Config.ProjectEndpoint();
+var credential = new DefaultAzureCredential();
+var project = new AIProjectClient(projectEndpoint, credential);
 
-// The tool calls the same project's image model and saves the PNG.
 var posterGenerator = new PosterGenerator(
-    project.GetProjectOpenAIClient().GetImageClient(imageModel),
+    new HttpClient(),
+    credential,
+    projectEndpoint,
+    imageDeploymentName,
     baseUrl: Config.Env("POSTER_URL_BASE") ?? $"http://localhost:{port}");
 
 AIAgent agent = project
@@ -35,7 +39,7 @@ AIAgent agent = project
     .UseOpenTelemetry(sourceName: "PosterAgent", configure: options => options.EnableSensitiveData = true) // demos only
     .Build()
     .AsAIAgent(
-        name: "poster-agent",
+        name: "poster-agent-globalainight",
         instructions: """
             You design posters for Global AI Night sessions.
             When asked for a poster, write a concise, concrete visual description in English

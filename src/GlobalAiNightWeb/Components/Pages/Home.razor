@@ -1,0 +1,16 @@
+@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Global AI Night · Agentes</PageTitle>
+
+<h1>Global AI Night · Agentes</h1>
+
+<main>
+    <AgentPanel Title="Agenda" Client="agenda"
+                Models="gpt-5-mini · SearchSessions"
+                Example="Are there any sessions about RAG?" />
+
+    <AgentPanel Title="Carteles" Client="poster"
+                Models="gpt-5-mini + gpt-image-1-mini · GeneratePoster"
+                Example="Create a retro-style poster for the Aspire session, using blue and cyan." />
+</main>

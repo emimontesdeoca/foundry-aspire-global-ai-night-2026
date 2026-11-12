@@ -5,7 +5,7 @@ paginate: true
 size: 16:9
 lang: es
 title: "De código a Foundry: infraestructura de agentes con Aspire"
-description: "Global AI Night 2026: .NET, Aspire y Foundry, con una demo en vivo de dos agentes."
+description: "Global AI Night 2026: desarrollo local e infraestructura con Aspire, de dos agentes .NET a Foundry."
 header: "**Global AI Night**  \n2026"
 footer: "Emiliano Montesdeoca · Global AI Night 2026"
 style: |
@@ -87,7 +87,7 @@ style: |
   section.closing header, section.closing footer, section.closing::after { color: #DBEFF9; }
   section.problem .scatter {
     position: relative;
-    height: 360px;
+    height: 420px;
     margin: 0.2em 0 0.35em;
   }
   section.problem .scatter span {
@@ -104,19 +104,24 @@ style: |
   }
   section.problem .scatter span:nth-child(4n) { border-color: #D83B01; background: #FFF1E8; }
   section.problem .scatter span:nth-child(4n+2) { border-color: #00BCF2; }
-  section.problem .scatter span:nth-child(1) { top: 4%; left: 2%; transform: rotate(-8deg); }
-  section.problem .scatter span:nth-child(2) { top: 29%; left: 38%; transform: rotate(5deg); }
-  section.problem .scatter span:nth-child(3) { top: 6%; left: 74%; transform: rotate(-4deg); }
-  section.problem .scatter span:nth-child(4) { top: 46%; left: 86%; transform: rotate(7deg); }
-  section.problem .scatter span:nth-child(5) { top: 53%; left: 7%; transform: rotate(-5deg); }
-  section.problem .scatter span:nth-child(6) { top: 31%; left: 64%; transform: rotate(6deg); }
-  section.problem .scatter span:nth-child(7) { top: 67%; left: 33%; transform: rotate(-6deg); }
-  section.problem .scatter span:nth-child(8) { top: 71%; left: 70%; transform: rotate(3deg); }
-  section.problem .scatter span:nth-child(9) { top: 19%; left: 20%; transform: rotate(4deg); }
-  section.problem .scatter span:nth-child(10) { top: 3%; left: 44%; transform: rotate(-7deg); }
-  section.problem .scatter span:nth-child(11) { top: 56%; left: 57%; transform: rotate(2deg); }
-  section.problem .scatter span:nth-child(12) { top: 81%; left: 3%; transform: rotate(-3deg); }
-  section.problem .scatter span:nth-child(13) { top: 83%; left: 51%; transform: rotate(5deg); }
+  section.problem .scatter span:nth-child(1) { top: 4%; left: 2%; transform: rotate(-6deg); }
+  section.problem .scatter span:nth-child(2) { top: 1%; left: 28%; transform: rotate(5deg); }
+  section.problem .scatter span:nth-child(3) { top: 7%; left: 59%; transform: rotate(-4deg); }
+  section.problem .scatter span:nth-child(4) { top: 3%; left: 84%; transform: rotate(6deg); }
+  section.problem .scatter span:nth-child(5) { top: 27%; left: 5%; transform: rotate(-5deg); }
+  section.problem .scatter span:nth-child(6) { top: 24%; left: 27%; transform: rotate(6deg); }
+  section.problem .scatter span:nth-child(7) { top: 26%; left: 49%; transform: rotate(-6deg); }
+  section.problem .scatter span:nth-child(8) { top: 25%; left: 73%; transform: rotate(3deg); }
+  section.problem .scatter span:nth-child(9) { top: 48%; left: 2%; transform: rotate(4deg); }
+  section.problem .scatter span:nth-child(10) { top: 46%; left: 24%; transform: rotate(-5deg); }
+  section.problem .scatter span:nth-child(11) { top: 49%; left: 53%; transform: rotate(2deg); }
+  section.problem .scatter span:nth-child(12) { top: 47%; left: 78%; transform: rotate(-3deg); }
+  section.problem .scatter span:nth-child(13) { top: 72%; left: 5%; transform: rotate(5deg); }
+  section.problem .scatter span:nth-child(14) { top: 70%; left: 22%; transform: rotate(-4deg); }
+  section.problem .scatter span:nth-child(15) { top: 73%; left: 41%; transform: rotate(4deg); }
+  section.problem .scatter span:nth-child(16) { top: 69%; left: 70%; transform: rotate(-5deg); }
+  section.problem .scatter span:nth-child(17) { top: 91%; left: 17%; transform: rotate(-3deg); }
+  section.problem .scatter span:nth-child(18) { top: 91%; left: 63%; transform: rotate(3deg); }
   section.demo {
     border-top: 8px solid #D83B01;
     background: #001344;
@@ -236,7 +241,8 @@ Global AI Night 2026 · 12 de noviembre · online
 <!--
 TIEMPO: 0:00 – 0:30
 
-Abrir con una promesa: en unos minutos explico el modelo; después veremos el recorrido funcionando.
+Abrir con una promesa: desarrollar y depurar en nuestro equipo usando recursos reales de Azure,
+y después desplegar los mismos agentes en Foundry. Aspire conecta código e infraestructura.
 -->
 
 ---
@@ -273,7 +279,7 @@ Presentación breve: qué haces, el trabajo con cloud e IA y los años como MVP.
 <div class="scatter">
   <span>App en local</span>
   <span>Modelos en el portal</span>
-  <span>Endpoint</span>
+  <span>URLs y endpoints</span>
   <span>API keys</span>
   <span>Permisos</span>
   <span>Docker</span>
@@ -284,34 +290,57 @@ Presentación breve: qué haces, el trabajo con cloud e IA y los años como MVP.
   <span>Variables</span>
   <span>Registry</span>
   <span>Scripts</span>
+  <span>Puertos</span>
+  <span>Credenciales</span>
+  <span>Entornos</span>
+  <span>Conexiones</span>
+  <span>Health checks</span>
 </div>
-
-**Cada pieza en un sitio. El pegamento vive en scripts, un README o en alguien.**
 
 <!--
 TIEMPO: 1:30 – 2:30
 
-Pregunta quién ha tenido que perseguir endpoints, claves, permisos y despliegues para pasar
-un agente de local a otro entorno. No explicar cada pieza: la imagen es el problema.
+Abrir con: «¿Os suenan todas estas cajas?». Dejar que reconozcan su día a día.
+Contar el recorrido: elegir suscripción y región, encontrar una URL, configurar credenciales,
+arrancar la app, averiguar por qué no conecta y repetir parte del trabajo al desplegar.
+No leer todas las cajas ni resolverlas todavía.
 -->
 
 ---
 
-## Lo que proponemos
+<!-- _class: visual -->
 
-<p class="intro">Un AppHost conecta tus agentes .NET con los modelos de Foundry.</p>
+## Una aplicación completa. Un mismo flujo de desarrollo.
 
-| .NET + Agent Framework | Aspire | Microsoft Foundry |
-|---|---|---|
-| Escribes los agentes | Describes recursos y conexiones | Despliegas modelos y alojas agentes |
+<p class="visual-intro">Aspire coordina servicios locales y recursos de Azure desde el AppHost.</p>
 
-<p class="metric">Un AppHost. El mismo código en local y en Foundry.</p>
+<div class="visual-layout">
+  <div class="visual-copy">
+    <p><strong>Desarrolla:</strong> el playground y los agentes corren como procesos locales.</p>
+    <p><strong>Orquesta:</strong> el AppHost declara cómo se conectan y de qué dependen.</p>
+    <p><strong>Observa:</strong> el dashboard reúne estado, URLs, logs y trazas.</p>
+  </div>
+  <div class="diagram">
+    <div class="diagram-node primary">AppHost · Aspire<br><small>define y coordina el sistema</small></div>
+    <div class="diagram-arrow">↓</div>
+    <div class="diagram-pair">
+      <div class="diagram-node">En local<br><small>playground · agentes</small></div>
+      <div class="diagram-node cyan">En Azure<br><small>Foundry · proyecto · modelos</small></div>
+    </div>
+    <div class="diagram-note">Aspire conecta los procesos locales con sus dependencias en Azure.</div>
+  </div>
+</div>
+
+<p class="metric">Desarrollar en local. Aspire orquesta el sistema completo.</p>
 
 <!--
 TIEMPO: 2:30 – 3:30
 
-Presentar el reparto en una frase: Agent Framework escribe los agentes, Aspire describe la
-aplicación y Foundry ofrece modelos, identidad y hosting.
+La demo se centra en el ciclo de desarrollo y la orquestación con Aspire, no en el framework
+interno de los agentes. El AppHost describe los procesos locales, sus dependencias y los recursos
+de Foundry en Azure. Con `aspire run`, el playground y los agentes se ejecutan en local; el
+dashboard centraliza URLs, estado, logs y trazas. Después revisaremos el Bicep generado y
+desplegaremos la infraestructura: en este ejemplo, Aspire no aloja los agentes en Azure.
 -->
 
 ---
@@ -320,33 +349,35 @@ aplicación y Foundry ofrece modelos, identidad y hosting.
 
 ## Aspire
 
-<p class="visual-intro">El toolkit de .NET para construir y orquestar aplicaciones distribuidas.</p>
+<p class="visual-intro">Describe la aplicación y sus dependencias; trabaja con ellas desde un mismo sitio.</p>
 
 <div class="visual-layout">
   <div class="visual-copy">
     <p><strong>AppHost.cs</strong> declara recursos, dependencias y referencias.</p>
-    <p><code>WithReference</code> conecta servicios; <code>WaitFor</code> ordena el arranque.</p>
-    <p><strong>Dashboard:</strong> estado, variables, logs y trazas.</p>
-    <p class="small"><code>run</code> local · <code>publish</code> Bicep · <code>deploy</code> agentes</p>
+    <p><code>WithReference</code> suministra endpoints y configuración.</p>
+    <p><code>WaitFor</code> espera a las dependencias antes de arrancar.</p>
+    <p><strong>Dashboard:</strong> URLs, estado, logs y trazas para depurar.</p>
   </div>
   <div class="diagram">
     <div class="diagram-node primary">AppHost.cs<br><small>modelo de la aplicación</small></div>
     <div class="diagram-arrow">↓</div>
     <div class="diagram-pair">
-      <div class="diagram-node">Recursos<br><small>Foundry · project · models</small></div>
-      <div class="diagram-node cyan">Agentes<br><small>schedule · poster</small></div>
+      <div class="diagram-node">Azure<br><small>Foundry · proyecto · modelos</small></div>
+      <div class="diagram-node cyan">Tu equipo<br><small>agentes · playground</small></div>
     </div>
     <div class="diagram-arrow">↓</div>
-    <div class="diagram-node">Dashboard<br><small>health · logs · traces</small></div>
+    <div class="diagram-node">Dashboard<br><small>estado · logs · trazas</small></div>
   </div>
 </div>
 
 <!--
 TIEMPO: 3:30 – 5:00
 
-Aspire no es otro portal ni el runtime del agente. Es el modelo de la aplicación:
-qué recursos hay y qué necesita cada servicio. Enseñar cómo las referencias inyectan
-endpoints/configuración y cómo el dashboard ayuda a depurar en local.
+Aspire no es el runtime del agente: describe qué recursos hay y qué necesita cada servicio.
+En desarrollo, conviven procesos locales y recursos reales de Azure.
+Las referencias suministran endpoints y nombres de despliegue como configuración;
+no hay que copiarlos a mano entre el portal y cada servicio. El dashboard permite abrir URLs
+y seguir una petición sin ir saltando entre consolas.
 -->
 
 ---
@@ -355,110 +386,102 @@ endpoints/configuración y cómo el dashboard ayuda a depurar en local.
 
 ## Microsoft Foundry
 
-<p class="visual-intro">La plataforma de Azure para construir y operar soluciones de IA.</p>
+<p class="visual-intro">La plataforma de Azure donde desplegamos y consumimos los modelos.</p>
 
 <div class="visual-layout">
   <div class="visual-copy">
-    <p><strong>Project</strong> agrupa los despliegues de modelos y los hosted agents.</p>
-    <p><strong>Identity + roles:</strong> acceso sin claves compartidas.</p>
-    <p><strong>Tracing:</strong> llamadas al modelo y a las herramientas.</p>
+    <p><strong>Proyecto:</strong> agrupa los modelos y expone una API.</p>
+    <p><strong>Despliegues independientes:</strong> texto e imágenes, cada uno con su modelo y versión.</p>
+    <p><strong>Los agentes</strong> llaman a esa API desde tu equipo.</p>
+    <p><strong>Preparación:</strong> región, cuota y permisos de la suscripción.</p>
+    <p><strong>Identidad y roles:</strong> acceso sin claves compartidas.</p>
   </div>
   <div class="diagram">
-    <div class="diagram-node primary">Foundry project</div>
+    <div class="diagram-node primary">project-globalainight</div>
     <div class="diagram-arrow">↓</div>
     <div class="diagram-pair">
-      <div class="diagram-node">chat<br><small>texto</small></div>
-      <div class="diagram-node orange">image<br><small>generación de imagen</small></div>
+      <div class="diagram-node">chat-globalainight<br><small>texto</small></div>
+      <div class="diagram-node orange">image-globalainight<br><small>generación de imagen</small></div>
     </div>
     <div class="diagram-arrow">↓</div>
-    <div class="diagram-node cyan">Hosted agents</div>
-    <div class="diagram-note">identity · roles · tracing</div>
+    <div class="diagram-node cyan">Responses API<br><small>la llaman los agentes</small></div>
+    <div class="diagram-note">Entra ID · sin API keys</div>
   </div>
 </div>
 
 <!--
 TIEMPO: 5:00 – 6:30
 
-En esta demo el proyecto contiene los dos despliegues. La identidad evita repartir API keys
-y tracing permite seguir llamadas al modelo y a herramientas.
+Foundry es la parte de IA de esta infraestructura, no una explicación aparte del flujo.
+Aquí lo usamos solo para los modelos: los agentes son procesos normales que llaman a la
+Responses API del proyecto. La autenticación va con Entra ID (az login en local), sin repartir API keys.
 -->
 
 ---
 
 <!-- _class: visual -->
 
-## Cómo lo unimos
+## Cada pieza en su sitio
 
 <div class="visual-layout">
   <div class="visual-copy">
-    <p><strong>Un AppHost</strong> declara el proyecto, los modelos y las referencias.</p>
-    <p><code>schedule</code> recibe <code>project + chat</code>.</p>
-    <p><code>poster</code> recibe <code>project + chat + image</code>.</p>
-    <p class="small"><code>aspire run</code> → local · <code>aspire deploy</code> → Foundry</p>
+    <p><strong>AppHost:</strong> proyecto, modelos y conexiones declarados en código.</p>
+    <p><strong>Agenda:</strong> recibe el proyecto y el modelo de chat.</p>
+    <p><strong>Carteles:</strong> añade el modelo de imágenes.</p>
+    <p><strong>Los agentes leen configuración;</strong> no necesitan conocer Aspire.</p>
   </div>
   <div class="diagram">
     <div class="diagram-node primary">AppHost · Aspire</div>
     <div class="diagram-arrow">↓</div>
-    <div class="diagram-node">Foundry project</div>
+    <div class="diagram-node">Proyecto de Foundry · Azure</div>
     <div class="diagram-pair">
-      <div class="diagram-node">chat</div>
-      <div class="diagram-node orange">image</div>
+      <div class="diagram-node">Chat</div>
+      <div class="diagram-node orange">Imágenes</div>
     </div>
     <div class="diagram-arrow">↓</div>
     <div class="diagram-pair">
-      <div class="diagram-node cyan">schedule<br><small>project + chat</small></div>
-      <div class="diagram-node orange">poster<br><small>project + chat + image</small></div>
+      <div class="diagram-node cyan">Agenda<br><small>proyecto + chat</small></div>
+      <div class="diagram-node orange">Carteles<br><small>proyecto + chat + imágenes</small></div>
     </div>
+    <div class="diagram-note">Agentes en tu equipo · modelos en Foundry</div>
   </div>
 </div>
 
 <!--
 TIEMPO: 6:30 – 8:00
 
-Enseñar el AppHost una sola vez. La agenda no recibe el modelo de imágenes.
-El código de los agentes no cambia: cambia dónde se ejecutan.
+Enseñar el AppHost una sola vez: recursos de Azure, referencias y WaitFor.
+La agenda no recibe el modelo de imágenes. Los agentes solo leen variables de entorno:
+el endpoint del proyecto y los nombres de despliegue de los modelos.
 -->
 
 ---
 
-## La demo: dos agentes
-
-| Agente | Qué hace | Modelos y herramienta |
-|---|---|---|
-| `schedule` | Recomienda sesiones | `gpt-5-mini` · `SearchSessions` |
-| `poster` | Crea un cartel | `gpt-5-mini` + `gpt-image-1-mini` · `GeneratePoster` |
-
-<p class="small">La agenda es ficticia. El modelo de imágenes solo dibuja; el agente decide qué pedirle.</p>
-
-<!--
-TIEMPO: 8:00 – 9:00
-
-Contexto mínimo para entender la demo: un agente de texto y otro que llama a una herramienta
-de imágenes. No recorrer el código línea a línea.
--->
-
----
 
 <!-- _class: demo -->
 
-## Demo 1 · Local
+## Demo 1 · Desarrollar en local
 
 ```bash
 cd src
 aspire run
 ```
 
-Dashboard → `schedule` y `poster` → mensajes y trazas
+**Agentes en tu equipo · modelos en Azure**
+
+Dashboard → `playground-globalainight` → pruebas y trazas
 
 <!--
-TIEMPO: 9:00 – 19:00
+TIEMPO: 9:00 – 20:00
 
 Antes de la charla, deja Foundry y los modelos provisionados, inicia sesión con az login y
 ten el dashboard listo. En directo:
-1. Enseñar los recursos.
-2. Enviar una pregunta a schedule.
-3. Pedir un cartel a poster y abrir el PNG.
-4. Mostrar la traza invoke_agent → chat → execute_tool GeneratePoster.
+1. Distinguir procesos locales y recursos de Azure en Resources.
+2. Abrir la URL del playground desde el dashboard y ver la configuración que recibe un agente.
+3. Probar una recomendación y pedir un cartel; abrir la imagen generada.
+4. Seguir la petición en las trazas, desde el agente hasta el modelo y la herramienta.
+
+El foco es el ciclo de desarrollo y depuración, no la calidad del cartel ni el prompt.
 
 Si la generación tarda, abrir Traces mientras espera. Si falla, reproducir el vídeo de respaldo.
 -->
@@ -467,54 +490,61 @@ Si la generación tarda, abrir Traces mientras espera. Si falla, reproducir el v
 
 <!-- _class: demo -->
 
-## Demo 2 · Infraestructura
+## Demo 2 · Revisar la infraestructura
 
 ```bash
 aspire publish -o infra
 ```
 
-**Bicep generado:** Foundry · proyecto · modelos · roles
+**Bicep generado:** Foundry · proyecto · modelos
 
 <!--
-TIEMPO: 19:00 – 22:00
+TIEMPO: 20:00 – 26:00
 
-Abrir la carpeta infra y mostrar el Bicep que genera Aspire. Elegir un fichero durante el
-ensayo; no explicar cada propiedad. Si vamos tarde, contar el resultado sin recorrerlo.
+Volver a las declaraciones del AppHost y abrir el Bicep generado: cuenta de Foundry
+(disableLocalAuth), proyecto y despliegues de modelos. Los agentes y el playground solo existen
+en aspire run, así que no aparecen aquí. Conectar lo que usamos en local con la infraestructura que se revisa
+junto al código. Elegir un fichero durante el ensayo; no explicar cada propiedad.
+Si vamos tarde, contar el resultado sin recorrerlo.
 -->
 
 ---
 
 <!-- _class: demo -->
 
-## Demo 3 · Hosted agents en Foundry
+## Demo 3 · Desplegar
 
 ```bash
 aspire deploy
 ```
 
-**Build → registry → agentes alojados → Playground y tracing**
+**El mismo AppHost → Foundry · proyecto · modelos en Azure**
 
 <!--
-TIEMPO: 22:00 – 32:00
+TIEMPO: 26:00 – 32:00
 
-Lanzar el deploy. Mientras se construyen y suben las imágenes, explicar qué ocurre en cada paso.
-En Foundry, abrir schedule en Playground y después las trazas.
+Breve. Lanzar el deploy (por ejemplo, contra otro grupo de recursos) y enseñar el progreso:
+crea la misma cuenta de Foundry, el proyecto y los modelos que usamos en local.
+Los agentes no se despliegan: siguen siendo procesos que llaman a la API del proyecto.
+Cómo alojarlos (App Service, Container Apps…) es otra decisión, fuera de esta charla.
 
-Si tarda más de lo previsto, usar la versión ya desplegada o el vídeo de respaldo.
+Si tarda, no esperar: enseñar el grupo de recursos ya desplegado en el portal.
 -->
 
 ---
 
-## Qué cambia
+## Del desarrollo al despliegue
 
-- **Menos pasos manuales:** la infraestructura se revisa junto al código.
-- **Sin claves compartidas:** acceso mediante identidad y roles.
-- **El mismo agente:** local con Aspire, alojado en Foundry.
+- **En local:** URLs, configuración y trazas desde Aspire.
+- **En el repositorio:** Foundry, proyecto y modelos junto al código.
+- **En Azure:** la misma infraestructura con `aspire deploy`, sin clics en el portal.
 
 <!--
 TIEMPO: 32:00 – 35:00
 
-Cerrar el arco con la slide 3: ya no hay que pegar a mano las piezas para cada entorno.
+Volver a la pregunta de las cajas: no desaparecen la suscripción, los permisos ni los modelos;
+lo que cambia es cómo los conectamos y cómo trabajamos con ellos.
+Aspire une el ciclo de desarrollo con la infraestructura y Foundry aporta los modelos.
 Terminar el contenido en el minuto 35.
 -->
 
