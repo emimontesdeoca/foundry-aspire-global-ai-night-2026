@@ -255,8 +255,8 @@ y después desplegar los mismos agentes en Foundry. Aspire conecta código e inf
   <div class="bio-copy">
     <p><strong>Cloud Solutions Team Lead</strong><br>Intelequia Technologies</p>
     <p>x5 <strong>Microsoft MVP</strong><br>Developer Technologies </p>
-    <p>Marido y papá de las mas hermosas.</p>
-    <p>Uruguayo, muy canario.</p>
+    <p><strong>Marido</strong> y <strong>papá</strong> de las mas hermosas.</p>
+    <p><strong>Uruguayo</strong>, muy canario.</p>
     <div class="bio-badges">
       <img src="assets/most-active-speaker-2025.svg" alt="Most Active Speaker 2025">
       <img src="assets/most-active-speaker-2024.svg" alt="Most Active Speaker 2024">
