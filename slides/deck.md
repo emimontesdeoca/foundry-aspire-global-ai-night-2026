@@ -253,8 +253,9 @@ y después desplegar los mismos agentes en Foundry. Aspire conecta código e inf
 
 <div class="bio-layout">
   <div class="bio-copy">
-    <p><strong>Cloud Solutions Team Lead</strong><br>Intelequia</p>
-    <p><strong>Microsoft MVP</strong><br>Developer Technologies · desde 2022</p>
+    <p><strong>Cloud Solutions Team Lead</strong><br>Intelequia Technologies</p>
+    <p>x5 <strong>Microsoft MVP</strong><br>Developer Technologies </p>
+    <p>Marido y papá de las mas hermosas.</p>
     <p>Uruguayo, muy canario.</p>
     <div class="bio-badges">
       <img src="assets/most-active-speaker-2025.svg" alt="Most Active Speaker 2025">
@@ -270,6 +271,19 @@ y después desplegar los mismos agentes en Foundry. Aspire conecta código e inf
 TIEMPO: 0:30 – 1:30
 
 Presentación breve: qué haces, el trabajo con cloud e IA y los años como MVP.
+-->
+
+---
+
+<!-- _class: lead -->
+<!-- _paginate: false -->
+
+# ¿Qué componentes forman una aplicación?
+
+<!--
+TIEMPO: 1:30 – 1:40
+
+Plantear la pregunta y dejar unos segundos de silencio. La siguiente slide ofrece una respuesta visual.
 -->
 
 ---
@@ -298,9 +312,9 @@ Presentación breve: qué haces, el trabajo con cloud e IA y los años como MVP.
 </div>
 
 <!--
-TIEMPO: 1:30 – 2:30
+TIEMPO: 1:40 – 2:30
 
-Abrir con: «¿Os suenan todas estas cajas?». Dejar que reconozcan su día a día.
+Presentar la nube como respuesta. Dejar que reconozcan su día a día y preguntar: «¿Os suenan todas estas cajas?».
 Contar el recorrido: elegir suscripción y región, encontrar una URL, configurar credenciales,
 arrancar la app, averiguar por qué no conecta y repetir parte del trabajo al desplegar.
 No leer todas las cajas ni resolverlas todavía.
